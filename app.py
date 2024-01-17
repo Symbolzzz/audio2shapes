@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from utils.wav2vec_all_2 import DeepRegressionModel, process_wav, normalize_hidden_states
 import torch
 import base64
@@ -8,6 +9,7 @@ import io
 import numpy as np
 
 app = Flask(__name__)
+CORS(app)
 app.config['JSON_SORT_KEYS'] = False
 
 @app.route('/', methods = ['GET', 'POST'])
@@ -23,6 +25,15 @@ def audio():
             data = request.json
 
             audio_base64 = data['speech']
+
+            # 添加需要处理删除speech头部的处理
+            # 删除 data:audio/wav;base64, ...
+            audio_base64 = audio_base64.split(',')
+            if (len(audio_base64) > 1) :
+                audio_base64 = audio_base64[1]
+            else:
+                audio_base64 = audio_base64[0]
+
             audio_decoded = base64.b64decode(audio_base64)
 
             audio_bytes, fps = librosa.load(io.BytesIO(audio_decoded), sr=data['rate'])
