@@ -18,11 +18,11 @@ pip install -r requirements.txt
 
 然后先运行 `app.py` 再运行 `launch.py` 。
 
-![截屏2023-12-13 16.58.35](./static/images/2023-12-13 16.58.35.png)
+![截屏2023-12-13 16.58.35](https://github.com/Symbolzzz/audio2shapes/blob/main/static/images/2023-12-13%2016.58.35.png?raw=true)
 
 运行 `app.py` 之后会出现上述界面，将上述地址复制到 `launch.py` 中url字段。
 
-![截屏2023-12-13 16.59.31](./static/images/2023-12-13 16.59.31.png)
+![截屏2023-12-13 16.59.31](https://github.com/Symbolzzz/audio2shapes/blob/main/static/images/2023-12-13%2016.59.31.png?raw=true)
 
 然后再运行 `launch.py`。
 
