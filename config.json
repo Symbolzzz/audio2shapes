@@ -1,0 +1,14 @@
+{
+    "file_path": "audios/BAC009S0003W0200.wav",
+    "url": "http://192.168.1.2:8888/audio2shapes",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "post_data": {
+        "format": "wav",
+        "rate": 16000,
+        "dev_pid": 1537,
+        "channel": 1,
+        "speech": ""
+    }
+}

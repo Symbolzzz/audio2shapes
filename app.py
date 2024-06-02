@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from utils.wav2vec_all_2 import DeepRegressionModel, process_wav, normalize_hidden_states
+from utils.transformer_models import predict_with_audio, TransformerModel
 import torch
 import base64
 import librosa
@@ -45,29 +45,26 @@ def audio():
 
             audio_numpy = np.frombuffer(audio_bytes, dtype=np.float32)
 
-            audio_tensor =  process_wav(audio_numpy)
-            # print(audio_tensor)
-            x = normalize_hidden_states(audio_tensor)
-            # print(x)
-            # print(x.shape)
-            x_test = x.reshape(-1, 768)
-            x_test_tensor = torch.tensor(x_test, dtype=torch.float32)
+            input_dim = 768
+            output_dim = 1
+            nhead = 8
+            num_encoder_layers = 8
+            num_decoder_layers = 8
+            dim_feedforward = 4096
+            max_seq_length = 390  # 与训练时一致
             
+            model = TransformerModel(input_dim=input_dim, output_dim=output_dim, nhead=nhead, num_encoder_layers=num_encoder_layers, num_decoder_layers=num_decoder_layers, dim_feedforward=dim_feedforward, max_seq_length=max_seq_length)
 
-            input_size = 768
-            hidden_sizes = [256, 128, 64] 
-            output_size = 1
-            model = DeepRegressionModel(input_size, hidden_sizes, output_size)
-
-            m_state_dict = torch.load('./utils/model.pt')
+            m_state_dict = torch.load('./utils/transformer_model.pth')
             model.load_state_dict(m_state_dict)
+            
+            # 使用训练好的模型进行预测
+            min_jaw_open_value = 0.0  # 替换为你的实际最小值
+            max_jaw_open_value = 1.0   # 替换为你的实际最大值
 
 
             with torch.no_grad():
-                y_preds_tensor = model(x_test_tensor)
-
-            y_preds = y_preds_tensor.numpy()
-            y = y_preds.tolist()
+                predicted_jaw_open_values = predict_with_audio(model, audio_numpy, min_jaw_open_value, max_jaw_open_value)
             
             res = {
                 'code' : 0, 
@@ -77,7 +74,7 @@ def audio():
                     'endTime' : endTime,
                     'fps' : fps,
                     'blendshapes' : {
-                        'jawOpen' : np.squeeze(y).tolist()
+                        'jawOpen' : np.squeeze(predicted_jaw_open_values).tolist()
                     },
                 },
             }

@@ -1,18 +1,24 @@
 import base64
 import requests
 import json
+import argparse
 
-# 准备POST请求的数据
-data = {
-    "format": "wav",
-    "rate": 16000,
-    "dev_pid": 1537,
-    "channel": 1,
-    "speech": ""
-}
+parser = argparse.ArgumentParser(description='config of the project.')
+parser.add_argument('-c', type=str, required=True, help='Path to the config file')
 
-# 读取音频文件
-file_path = 'audios/BAC009S0003W0200.wav'
+args = parser.parse_args()
+
+print(args.c)
+
+# 读取配置文件
+with open(args.c, 'r') as config_file:
+    config = json.load(config_file)
+    
+file_path = config['file_path']
+url = config['url']
+headers = config['headers']
+data = config['post_data']
+
 
 # 将音频文件以字节流存储
 with open(file_path, 'rb') as f:
@@ -25,8 +31,6 @@ audio_base64 = base64.b64encode(audio_content).decode('utf-8')
 data["speech"] = audio_base64
 
 # 发送POST请求
-url = 'http://172.31.70.115:8888/audio2shapes'
-headers = {'Content-Type': 'application/json'}
 response = requests.post(url, data=json.dumps(data), headers=headers)
 
 # 打印服务器的响应
