@@ -1,6 +1,6 @@
 # audio2shapes API
 
-从语音预测每一帧的 52 个 blendshape 值，输入语音，返回以 json 格式存储的 blendshape。
+从语音预测每一帧的 52 个 blendshape 值，输入语音，返回以 json 格式存储的 blendshape。我们为了先看模型训练的效果也为了简化训练的过程，目前仅预测了`jawopen`的值。
 
 ## 调用方式
 
